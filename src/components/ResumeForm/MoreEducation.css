@@ -1,0 +1,16 @@
+.col_data{
+    display: flex;
+    flex-direction: column;
+}
+
+.education-row{
+    border: 1px solid black;
+    margin-bottom: 20px;
+    /* -webkit-box-shadow: 0 10px 6px -6px ; */
+    box-shadow: 0 10px 10px -5px;
+}
+
+.education-col{
+    display: flex !important;
+    justify-content: space-between;
+}

@@ -1,0 +1,48 @@
+{
+    "personal": {
+        "fname": "tushar",
+        "lname": "khokhar",
+        "address": "surat",
+        "city": "surat",
+        "zipcode": "3954020",
+        "country": "Belarus",
+        "email": "khokhartushar15@gmailcom",
+        "phone": "1234567890"
+    },
+    "experience": {
+        "employer": "IBM",
+        "jobtitle": "eng",
+        "city": "surat",
+        "state": "Gujarat",
+        "startdate_month": "March",
+        "startdate_year": "2014",
+        "job_description": "job"
+    },
+    "education": [
+        {
+            "schoolname": "Harward",
+            "city": "surat",
+            "state": "Gujarat",
+            "degree": "Bachelor of Arts",
+            "graduation_month": "December",
+            "graduation_year": "2016",
+            "field_of_study": "computer"
+        },
+        {
+            "schoolname": "scet",
+            "city": "surat",
+            "state": "Gujarat",
+            "degree": "Bachelor of Commerce",
+            "field_of_study": "computer"
+        }
+    ],
+    "skills": {
+        "skill1": "c++",
+        "level1": "Experienced",
+        "skill2": "c",
+        "level2": "Beginner"
+    },
+    "summray": {
+        "summary": "i am doing job ...."
+    }
+}

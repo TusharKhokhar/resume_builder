@@ -1,0 +1,38 @@
+.heading{
+  font-weight: 600;
+}
+.p-tag{
+  font-size: 14px !important;
+  color: black;
+}
+
+.label{
+  color: black !important;
+  margin-bottom: 0.3rem;
+}
+
+.row-margin{
+  margin-top: 10px;
+}
+
+.input-border{
+  border: 1px solid purple;
+}
+
+.new-div{
+  margin-top: 20px;
+}
+
+.btn-div{
+  margin-top: 50px;
+  }
+
+.checkbox{
+  margin-left: 0px !important;
+}
+
+.checkbox-label{
+  margin-left: 2px !important;
+  font-size: small;
+
+}

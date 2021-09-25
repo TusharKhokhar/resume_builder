@@ -36,3 +36,8 @@
   font-size: small;
 
 }
+
+.error_text{
+  color: red;
+  font-size: 15px;
+}

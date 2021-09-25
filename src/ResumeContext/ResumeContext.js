@@ -1,6 +1,7 @@
 import React from 'react'
 import { createContext } from 'react'
 import { useState } from 'react'
+import { Validation } from '../Validation/Validation'
 
 export const ResumeContext = createContext({
     formData: {
@@ -9,6 +10,7 @@ export const ResumeContext = createContext({
         education: [],
         skills: {},
         summray: {},
+        error: {}
     },
     showdiv: 1,
     next: () => { },
@@ -26,19 +28,30 @@ const ResumeContextProvider = (props) => {
             educationInfo: [],
             skillsInfo: {},
             summrayInfo: {},
+            error: {}
+
         }
     )
     const [showdiv, setShowdiv] = useState(1)
-
+    const [error, setError]=useState({})
     const [educationData, setEducationData] = useState({})
     const backButtonHandler = () => {
         setShowdiv(preVal => preVal - 1)
     }
 
     const nextButtonHandler = () => {
-        setShowdiv(preVal => preVal + 1)
+        // const error = Validation(formdata)
+        // if (Object.keys(error).length > 0) {
+            // console.log("here");
+            setError(error)
+        // }
+        // else {
+            // setError({})
+            setShowdiv(preVal => preVal + 1)
+        // }
 
     }
+    // console.log(error);
     const saveHandler = () => {
         if (Object.keys(formdata)[showdiv - 1] == 'educationInfo') {
             if (Object.keys(educationData).length !== 0) {
@@ -49,7 +62,9 @@ const ResumeContextProvider = (props) => {
         }
     }
     const changeHandler = (e) => {
+        // setError({error})
         if (Object.keys(formdata)[showdiv - 1] == 'educationInfo') {
+            // setError({...error,[e.target.name]:''})
             setEducationData({
                 ...educationData,
                 [e.target.name]: e.target.value
@@ -57,7 +72,7 @@ const ResumeContextProvider = (props) => {
 
         }
         else {
-            console.log(Object.keys(formdata)[showdiv - 1]);
+            // setError({...error,[e.target.name]:''})
             setFormData({
                 ...formdata, [Object.keys(formdata)[showdiv - 1]]: {
                     ...formdata[Object.keys(formdata)[showdiv - 1]],
@@ -65,7 +80,7 @@ const ResumeContextProvider = (props) => {
                 }
             })
         }
-        
+
     }
     const resumeContextValue = {
         formData: {
@@ -74,6 +89,7 @@ const ResumeContextProvider = (props) => {
             education: formdata.educationInfo,
             skills: formdata.skillsInfo,
             summray: formdata.summrayInfo,
+            error:error
         },
         showdiv: showdiv,
         next: nextButtonHandler,

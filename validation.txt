@@ -1,0 +1,416 @@
+import { isValidPhoneNumber as validateMobileNumber} from "react-phone-number-input/mobile";
+import { isValidPhoneNumber as validatePhoneNumber} from "react-phone-number-input";
+import moment from "moment"
+import * as yup from "yup";
+
+export const EMAIL_REGEX = "^(?!_-)[A-Za-z0-9\\+]+(\\.[_A-Za-z0-9]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,4})$";
+export const PHONE_NUMBER_REGEX = /^\+?\d{4,13}$/;
+const PASSWORD_REGEX = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,15}$/
+const NAME_REGEX = /^[a-zA-Z "'-.]*$/
+const MEDICAL_CODE_REGEX = /^[a-zA-Z0-9:.-]*$/
+const DEPARTMENT_REGEX = /^[a-zA-Z,&() -]*$/
+const LOWERCASE_UNDERSCORE =  /^[a-z]+(?:_+[a-z]+)*$/
+const PIN_CODE_REGEX = /^(?=.*\d.*)[A-Za-z0-9]{4,16}$/
+
+export const isValidPhoneInput = (number)=>{
+    return process.env.REACT_APP_PHONE_NUMBER_VALIDATOR_TYPE === "mobile"
+      ? validateMobileNumber(number)
+      : validatePhoneNumber(number);
+}
+
+export const validations = {
+    firstname: yup.string().min(2, 'Name is too short').max(256, 'Name is too long').matches(NAME_REGEX, 'Please enter a valid name'),
+    firstnameRequired: yup.string().required("Required field cannot be left blank").min(2, 'Name is too short').max(256, 'Name is too long').matches(NAME_REGEX, 'Please enter a valid name'),
+    lastname: yup.string().min(2, 'Name is too short').max(256, 'Name is too long').matches(NAME_REGEX, 'Please enter a valid name'),
+    lastnameRequired: yup.string().required("Required field cannot be left blank").min(2, 'Name is too short').max(256, 'Name is too long').matches(NAME_REGEX, 'Please enter a valid name'),
+    phone: yup.string().test('phone-validation', 'Please enter valid phone number.', (value) => value && isValidPhoneInput(value) || !value),
+    phoneRequired: yup.string().required("Required field cannot be left blank").test('phone-validation', 'Please enter valid phone number.', (value) => value && isValidPhoneInput(value)),
+    password: yup.string().required("Required field cannot be left blank").matches(PASSWORD_REGEX, "Password should be minimum 8 characters, maximum 15 characters, at least one uppercase, one number and one special character (eg : Abcd@123)"),
+    email: yup.string().email("Please enter a valid email address"),
+    address: yup.string().min(1, 'Required field cannot be left blank'), 
+    emailRequired: yup.string().required("Required field cannot be left blank").max(256, 'Email is too long').email("Please enter a valid email address").matches(EMAIL_REGEX, 'Please enter a valid email address'),
+    addressRequired: yup.string().required("Required field cannot be left blank").max(256, 'Address is too long'),
+    clinicnameRequired: yup.string().required("Required field cannot be left blank"),
+    pincode: yup.string().min(4, 'Please enter a valid pincode').max(16, 'Please enter a valid pincode'),
+    pincodeRequired: yup.string().required("Required field cannot be left blank").min(4, 'Please enter a valid pincode').max(16, 'Please enter a valid pincode').matches(PIN_CODE_REGEX, 'Please enter a valid pincode'),
+    medicalCodeRequired: yup.string().required("Required field cannot be left blank").max(256, 'Registration Number is too long.').matches(MEDICAL_CODE_REGEX, 'Please enter a valid medical registration code'),
+    departmentRequired: yup.string().required("Required field cannot be left blank").max(256, 'Department is too long.').matches(DEPARTMENT_REGEX, 'Please enter a valid Department'),
+    height: yup.number().typeError('Please enter valid height'),
+    heightRequired: yup.number().required("Required field cannot be left blank").max(999, 'Height value is not valid').typeError('Please enter valid height'),
+    weight: yup.number().typeError('Please enter valid weight'),
+    weightRequired: yup.number().required("Required field cannot be left blank").max(999, 'Weight value is not valid').typeError('Please enter valid weight'),
+    commonRequired: yup.string().required("Required field cannot be left blank"),
+    genderRequired: yup.string().required("Required field cannot be left blank").oneOf(['male', 'female', 'other'], "Required field cannot be left blank"),
+    dobRequired: yup.mixed().required("Required field cannot be left blank").test('dob-validation', 'Please select valid date of birth', (value) => value && moment(value).isValid() && moment(value).isSameOrBefore(moment(), 'D')),
+    futreDateRequired: yup.mixed().required("Required field cannot be left blank").test('dob-validation', 'Please select valid date', (value) => value && moment(value).isValid() && moment(value).isSameOrAfter(moment(), 'D')),
+    timeRequired: yup.mixed().required("Required field cannot be left blank").test('dob-validation', 'Please select valid time', (value) => value && moment(value).isValid()),
+    possitveNumber: yup.number().typeError('Please enter valid fee').min(1, 'Please enter valid fee').max(9999, 'Please enter a maximum of 4 digits'),
+    durationRequired: yup.number().required("Required field cannot be left blank").typeError('Please enter valid duration').min(1, 'Please enter valid duration'),
+    freeTextInput: yup.string().required("Required field cannot be left blank").min(2, 'To Short').max(250, 'To Long'),
+    mixedRequired: yup.mixed().required("Required field cannot be left blank"),
+    validAmount: yup.number().required("Required field cannot be left blank").typeError('Please enter valid amount').min(1, 'Please enter valid amount'),
+    validPositiveNumber: yup.number().required("Required field cannot be left blank").typeError('Please enter valid number').min(1, 'Please enter valid number'),
+    validPositiveNumberNotMandatory: yup.number().nullable().typeError('Please enter valid number').min(1, 'Please enter valid number'),
+    lowercaseUnderscore: yup.string().required("Required field cannot be left blank").min(1, 'Too short').max(255, 'Too long').matches(LOWERCASE_UNDERSCORE, 'Please enter a valid value with only lower case and _ allowed'),
+    careProgramName: yup.string().required("Required field cannot be left blank").max(40, "Care program name is too long"),
+    boolean: yup.boolean(),
+    descriptionRequired: yup.string().required("Required field cannot be left blank"),
+    adHocDescription: yup.string().required("Required field cannot be left blank").max(50, "Payment for is too long"),
+}
+
+
+
+=================================> use of valosation
+
+
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Grid, makeStyles } from "@material-ui/core";
+import PropTypes from "prop-types";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useQuery } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
+import * as yup from "yup";
+import { getDepartments,createCareProgramme, updateCareProgramme } from "../../../api/careProgram";
+import CustomDropDown from "../../../components/common/CustomDropDown";
+import CustomMenuItem from "../../../components/common/CustomDropDown/CustomMenuItem";
+import CustomFileInput from "../../../components/common/CustomFileInput";
+import CustomFormEM from "../../../components/common/CustomFormEM";
+import CustomSubmitButton from "../../../components/common/CustomSubmitButton";
+import CustomTextField from "../../../components/common/CustomTextField";
+import DurationTextField from "../../../components/DurationTextField";
+import DoctorSearch from "../../../components/DoctorSearch";
+import Notify from "../../../components/Notify";
+import { validations } from "../../../config/validations.config";
+import { updateCareProgramData } from "../../../store/actions/careProgram";
+import { uploadToS3 } from "../../../utils/uploadToS3";
+import { styles } from "./styles";
+const mime = require("mime-types");
+
+const useStyles = makeStyles(styles);
+const CareProgramDetails = ({ handleNextStep,setCareProgramId }) => {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const careProgramData = useSelector(state => state?.careProgram || {});
+  const clinic = useSelector(state => state?.clinic?.details);
+  const [clinicId, setClinicId] = useState(clinic._id);
+
+  const [request, setRequest] = useState({
+    message: "",
+    loading: false,
+    severity: ""
+  });
+  const [department, setDepartment] = useState();
+  const [durationType, setDurationType] = useState("Month");
+  const [doctorId, setDoctorId] = useState();
+  const [logo, setLogo] = useState("");
+
+  const {
+    data: departments = [],
+    error: departmentsError,
+    isFetching: departmentFetching
+  } = useQuery(["departments"], getDepartments);
+
+  const schema = yup.object().shape({
+    department: validations.commonRequired,
+    duration: validations.durationRequired,
+    primaryDoctor: validations.commonRequired,
+    programName: validations.careProgramName,
+    description: validations.commonRequired,
+    benefits: validations.commonRequired
+  });
+
+  const {
+    handleSubmit,
+    errors,
+    control,
+    setValue,
+    trigger,
+    register
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "all"
+  });
+
+  useEffect(() => {
+    if (durationType === "Year")
+      setValue(
+        "duration",
+        careProgramData.duration ? careProgramData.duration / 12 : ""
+      );
+    else setValue("duration", careProgramData.duration || "");
+  }, [careProgramData]);
+
+  const onLogoChange = async e => {
+    if (e.target.files && e.target.files[0]) {
+      setRequest({ loading: true, message: "", severity: "" });
+      if (
+        (mime.lookup(e.target.files[0].name) || "").includes("image") ||
+        (mime.lookup(e.target.files[0].name) === false &&
+          e.target.files[0].name
+            .split(".")
+          [e.target.files[0].name.split(".").length - 1].toLowerCase() ===
+          "jfif")
+      ) {
+        const { url, err } = await uploadToS3(e.target.files[0], "logo");
+        if (url) {
+          setLogo(url);
+          setRequest({
+            loading: false,
+            message: "Uploaded successfuly"
+          });
+        } else {
+          setRequest({
+            loading: false,
+            message: err?.response?.data?.message || "Error Occured while uploading!",
+            severity: ""
+          });
+        }
+      } else {
+        setRequest({
+          loading: false,
+          message: "Invalid Image",
+          severity: "error"
+        });
+      }
+    }
+  };
+
+  const onSubmit = async values => {
+    const benefits = values.benefits.split(/\r?\n/);
+    const isNew = careProgramData._id ? false : true;
+    const payload = {
+      name: values.programName,
+      description: values.description,
+      doctor: doctorId,
+      imageUrl: logo || "",
+      department: values.department,
+      duration: durationType === "Month" ? values.duration : values.duration * 12,
+      benefits: benefits
+    };
+    setRequest({ message: "", loading: true, severity: "" });
+    try {
+      let response;
+      if (isNew) {
+        response = await createCareProgramme(clinicId, payload);
+        setCareProgramId(response?.data?._id)
+      } else {
+        response = await updateCareProgramme(careProgramData._id, payload);
+      }
+
+      if (response && response.status < 350 && response.data) {
+        dispatch(updateCareProgramData(payload));
+        setRequest({
+          message: isNew
+            ? "New care program created successfully."
+            : "Care program updated successfully.",
+          loading: false,
+          severity: ""
+        });
+        handleNextStep();
+      }
+    } catch (e) {
+      setRequest({
+        message: e?.response?.data?.message || "Something went wrong!",
+        loading: false,
+        severity: ""
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (careProgramData) {
+      const benefits = careProgramData.benefits || [];
+
+      setDepartment(careProgramData.department);
+      setDoctorId(careProgramData?.doctor?._id || careProgramData?.doctor);
+      setLogo(careProgramData.imageUrl);
+
+      setValue("department", careProgramData.department);
+      // setValue("primaryDoctor", careProgramData.doctor);
+      setValue("programName", careProgramData.name);
+      setValue("description", careProgramData.description);
+      setValue("benefits", benefits.join("\n"));
+    }
+  }, [careProgramData]);
+
+  return (
+    <>
+      {request.message && (
+        <Notify message={request.message} severity={request.severity} />
+      )}
+      {
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Grid container spacing={6} className={classes.formContainer}>
+            <Grid item md={4} xs={12}>
+              <Controller
+                name="programName"
+                control={control}
+                render={controlProps => {
+                  return (
+                    <CustomTextField
+                      label="Care Program Name"
+                      placeholder="Enter Care Program Name"
+                      value={controlProps.value}
+                      onChange={e => {
+                        controlProps.onChange(e.target.value);
+                      }}
+                    />
+                  );
+                }}
+              />
+              <CustomFormEM
+                errors={errors}
+                name="programName"
+                render={({ message }) => <p>{message}</p>}
+              />
+            </Grid>
+
+            <Grid item md={4} xs={12}>
+              <Controller
+                name="description"
+                control={control}
+                render={controlProps => {
+                  return (
+                    <CustomTextField
+                      label="Description"
+                      placeholder="Enter Short Description"
+                      multiline
+                      rows={4}
+                      value={controlProps.value}
+                      onChange={e => {
+                        controlProps.onChange(e.target.value);
+                      }}
+                    />
+                  );
+                }}
+              />
+              <CustomFormEM
+                errors={errors}
+                name="description"
+                render={({ message }) => <p>{message}</p>}
+              />
+            </Grid>
+
+            <Grid item md={4} xs={12}>
+              <CustomFileInput
+                label="Upload Image"
+                placeholder="Upload Image"
+                onChange={onLogoChange}
+              />
+            </Grid>
+
+            <Grid item md={4} xs={12}>
+              <Controller
+                name="department"
+                control={control}
+                render={controlProps => (
+                  <CustomDropDown
+                    label="Speciality"
+                    value={controlProps.value || ""}
+                    onChange={e => {
+                      controlProps.onChange(e.target.value);
+                      setDepartment(e.target.value);
+                    }}
+                  >
+                    {departments.map(v => (
+                      <CustomMenuItem value={v.name}>{v.name}</CustomMenuItem>
+                    ))}
+                  </CustomDropDown>
+                )}
+              />
+              <CustomFormEM
+                errors={errors}
+                name="department"
+                render={({ message }) => <p>{message}</p>}
+              />
+            </Grid>
+
+            <Grid item md={4} xs={12}>
+              <Controller
+                name="benefits"
+                control={control}
+                render={controlProps => {
+                  return (
+                    <CustomTextField
+                      label="Benefits"
+                      placeholder="Enter Benefits"
+                      multiline
+                      rows={4}
+                      value={controlProps.value}
+                      onChange={e => {
+                        controlProps.onChange(e.target.value);
+                      }}
+                    />
+                  );
+                }}
+              />
+              <CustomFormEM
+                errors={errors}
+                name="benefits"
+                render={({ message }) => <p>{message}</p>}
+              />
+            </Grid>
+
+            <Grid item md={4} xs={12}>
+              <Controller
+                name="primaryDoctor"
+                control={control}
+                render={controlProps => (
+                  <DoctorSearch
+                    label="Primary Doctor"
+                    role="doctor"
+                    roleName={"Doctor"}
+                    selectedDoctorId={doctorId || ""}
+                    onSelection={newVal => {
+                      setDoctorId(newVal?.id);
+                      controlProps.onChange(newVal);
+                    }}
+                  />
+                )}
+              />
+              <CustomFormEM
+                errors={errors}
+                name="primaryDoctor"
+                render={({ message }) => <p>{message}</p>}
+              />
+            </Grid>
+            <Grid item md={4} xs={12}>
+              <Controller
+                name="duration"
+                control={control}
+                render={controlProps => {
+                  return (
+                    <DurationTextField
+                      type="number"
+                      label="Duration"
+                      value={controlProps.value}
+                      defaultDurationType={durationType}
+                      onDurationTypeChange={e => {
+                        setDurationType(e.target.value);
+                      }}
+                      onChange={e => {
+                        controlProps.onChange(e.target.value);
+                      }}
+                    />
+                  );
+                }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomSubmitButton type="submit" isLoading={request.loading}>
+                NEXT
+              </CustomSubmitButton>
+            </Grid>
+          </Grid>
+        </form>
+      }
+    </>
+  );
+};
+
+CareProgramDetails.propTypes = {
+  handleNextStep: PropTypes.func.isRequired
+};
+
+export default CareProgramDetails;
